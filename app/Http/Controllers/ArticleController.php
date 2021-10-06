@@ -2,26 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Article; 
+use Illuminate\Support\Facades\Auth;
+use App\Models\Comment;
+use App\Models\User;
+use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+// use App\Http\Controllers\CommentController;
 
 class ArticleController extends Controller
 {
 
         // READING
     public function index(){
-        return view('index', [
-            'articles'=> Article::all()
+        return view('home', [
+            'articles' => Article::all()
         ]);
     }
 
-    public function show(Article $article){
+    public function show($id){
+
         return view('show', [
-            'article' => Article::find($article->id)
+            'article' => Article::find($id),
+            'comments' => Comment::where('article_id', $id)
+            ->get()
         ]);
     }
 
-        // CREATING 
+        // CREATING
     public function create(){
         return view('create');
     }
@@ -29,10 +37,11 @@ class ArticleController extends Controller
     public function store(Request $request){
         Article::query()->create([
             'title' => $request->title,
-            'body' => $request->body
+            'body' => $request->body,
+            'user_id' => auth()->user()->id
         ]);
-        
-        return redirect()->to('/articles');
+
+        return redirect()->to('/home');
     }
 
         // EDITING
@@ -46,17 +55,17 @@ class ArticleController extends Controller
         'body' => $request->body
        ]);
 
-        return redirect()->to('/articles');
+        return redirect()->to('home');
     }
 
         // DELETING
-    public function destroy(Article $article) {
+    public function destroy($id) {
         try {
-            $article->delete();            
+            Article::find($id)->delete();
         } catch (\Throwable $th) {
             dd($th);
         }
 
-        return redirect()->to('/articles');
+        return redirect()->to('/home');
     }
 }

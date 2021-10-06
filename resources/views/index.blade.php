@@ -7,15 +7,14 @@
     <title>All articles</title>
 </head>
 <body>
-    <p>
-        <a href="{{ route('articles.index') }}">Main</a>
-    </p>
+    <h1>All the articles</h1>
+    <a href="/articles/create">create new article</a>
     @foreach ($articles as $article)
         <article>
-            <h1>
-                {{ $article->title }} 
-            </h1>
-            <a href="{{ route('articles.show', $article->id) }}">Show</a>
+            <h2>
+                {{ $article->title }}
+            </h2>
+            <a href="{{ route('articles.show', $article) }}">Show</a>
             <a href="{{ route('articles.edit', $article->id) }}">Edit</a>
             <a onclick="document.getElementById('delete-form-{{$article->id}}').submit();">Delete</a>
             <form method="POST" id="delete-form-{{$article->id}}" action="{{route('articles.destroy', $article->id)}}">
